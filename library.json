@@ -1,0 +1,22 @@
+{
+  "name": "SensorMonitor",
+  "keywords": "sensor",
+  "description": "Arduino Library that takes care of monitoring your sensors.",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/trojanc/SensorMonitor.git"
+  },
+  "authors":
+  [
+    {
+      "name": "TrojanC",
+      "email": "webmaster@trojanc.co.za",
+      "url": "https://www.trojanc.co.za",
+      "maintainer": true
+    }
+  ],
+  "version": "0.0.1",
+  "frameworks": "arduino",
+  "platforms": "atmelavr"
+}
