@@ -34,22 +34,22 @@ void loop(void){
 The following configuration can be done by overriding the `#define` values from `SensorMonitor.h`.
 
 ### SM_RANDOM_ANALOG
-**Default:** 0
+**Default:** 0<br>
 Analog pin to use for a random value. The random value is used to spread the sensors apart so that not all of them are queried at the exact same time.
 
 ### SM_UPDATE_INTERVAL
-**Default:** 15000
+**Default:** 15000<br>
 Millisecond interval at which all sensors should at least send an update
 
 ### SM_UPDATE_MIN_DELAY
-**Default:** 1500
+**Default:** 1500<br>
 Minimum amount to delay before taking readings
 
 ### SM_VALUE_DELTA
-**Default:** 0.5
+**Default:** 0.5<br>
 Delta required before updating immediately
 
 ### SM_VALUE_DELTA
-**Default:** 5
+**Default:** 5<br>
 Maximum number of sensors that can be monitored.
 Keep this as small as required to save memory
