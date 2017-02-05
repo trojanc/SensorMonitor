@@ -8,7 +8,7 @@
 #define SM_RANDOM_ANALOG 0
 #endif
 
-// Interval at which all nodes should at least send an update
+// Millisecond interval at which all sensors should at least send an update
 #ifndef SM_UPDATE_INTERVAL
 #define SM_UPDATE_INTERVAL 15000
 #endif
@@ -24,6 +24,7 @@
 #endif
 
 // Maximum number of sensors that can be monitored
+// Keep this as small as required to save memory
 #ifndef SM_NUM_SENSORS
 #define SM_NUM_SENSORS 5
 #endif
