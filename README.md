@@ -1,6 +1,13 @@
 # SensorMonitor
 Arduino Sensor monitor library. This library allows you to get updates from your sensors in a controlled manner. You do not have to keep track of timeouts and deltas to determine if you need to publish an update for a sensor. All you have to do is register sensor IDs with the library, implement the method to get a reading for the sensor, and do something with the value when you are asked to.
 
+## Installation
+### Arduino IDE
+Download the source code and place inside Arduino libraries folder
+
+## Platformio
+See documentation at [Platformio - Sensor Monitor](http://platformio.org/lib/show/1473/SensorMonitor/installation)
+
 ## Example use case
 Let's say you have temperature sensor, and you publish the readings to a remote server when the value changes. To save power you don't want to send the value every single time if the value stayed the same. If the value changed - lets say by 2 degrees - then you want to imediately send an update to the server. If value didn't change, then you only want to update the server every 5 minutes, basically just to say the sensor is still alive. This can be done without this library, but then you'd have to keep track of timers, last value, delta value etc.
 
