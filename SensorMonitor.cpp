@@ -47,13 +47,33 @@ void SensorMonitor::begin(void){
 
 void SensorMonitor::update(void){
 	for(int i = 0; i < _items ; i++){
+		// Check if we may ask this sensor for a reading
 		if(SensorMonitor::hasTimedout(_monitoredSensors[i].last_reading, SM_UPDATE_MIN_DELAY)){
+
+			// Update the last time that we took a reading from this sensor
 			_monitoredSensors[i].last_reading = millis();
+
+			// Call the configured function to get a reading for the sensor
 			float newValue = _getReadingCallback(_monitoredSensors[i].sensorId);
+
+			// The sensor could not produce a reading at this moment
+			if(newValue == SM_NO_READING){
+				continue; // Continue to the next sensor
+			}
+
+			// Check if the value delta is big enough to cause an immediate update
 			bool reachedDelta = SensorMonitor::checkDelta(_monitoredSensors[i].last_value, newValue);
+
+			// If we need to update immediately, or if the last time we updated was long enough ago
 			if(reachedDelta || SensorMonitor::hasTimedout(_monitoredSensors[i].last_update, SM_UPDATE_INTERVAL)){
+
+				// Save the last value that we called an update for
 				_monitoredSensors[i].last_value = newValue;
+
+				// Call the configured update function
 				_onUpdateCallback(_monitoredSensors[i].sensorId, _monitoredSensors[i].last_value);
+
+				// Save the time we last did an update call
 				_monitoredSensors[i].last_update = millis() + random(SM_UPDATE_MIN_DELAY / 3); // set next update to a random bit ahead in time
 			}
 		}

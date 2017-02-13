@@ -52,6 +52,9 @@ SOFTWARE.
 #define SM_NUM_SENSORS 5
 #endif
 
+// Return this value when the sensor is not available
+// or cannot produce a reading at the moment
+#define SM_NO_READING -3.4028235E+38
 
 struct __attribute__((__packed__)) SensorItem{
 	uint8_t sensorId;
