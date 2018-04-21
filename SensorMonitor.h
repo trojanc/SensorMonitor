@@ -56,6 +56,14 @@ SOFTWARE.
 // or cannot produce a reading at the moment
 #define SM_NO_READING -3.4028235E+38
 
+// Define a debug function if configured to debug
+#ifdef SM_DEBUG
+#define IF_SM_DEBUG(x) ({x;})
+#else
+#define IF_SM_DEBUG(x)
+#endif
+
+// Definition of a sensor to monitor
 struct __attribute__((__packed__)) SensorItem{
 	uint8_t sensorId;
 	uint32_t last_reading;
@@ -69,27 +77,43 @@ typedef void (*SensorMonitorUpdate)(uint8_t sensorId, float value);
 // Function called to get a reading
 typedef float (*SensorMonitorReading)(uint8_t sensorId);
 
-
-
 class SensorMonitor
 {
 public:
+	// Create a new instance of a sensor monitor
 	SensorMonitor(SensorMonitorReading getReadingCallback, SensorMonitorUpdate onUpdateCallback);
+
+	//  Called to register a sensor to the library
 	void registerSensor(const uint8_t sensorId);
+
+	// Invoked when a new reading has to be processed
+	void newReading(const uint8_t sensorId, const float value);
+
+	// Initialises all registered modules and prepares the library
 	void begin(void);
+
+	// This method must be called regularly during the main loop to let this
+	// monitor do its work
 	void update(void);
 private:
+
+	// The list of sensors to monitor
 	SensorItem _monitoredSensors[SM_NUM_SENSORS];
 
 	// Index of last inserted sensor
 	uint8_t _items = 0;
 
+	// Reference to the callback for when an update the remote should be done.
 	SensorMonitorUpdate _onUpdateCallback;
+
+	// Reference to the callback to get a new reading
 	SensorMonitorReading _getReadingCallback;
 
+	// Helper to check if a timeout has passed
 	bool hasTimedout(const uint32_t from, const uint32_t period);
+
+	// Helper to check if a value has passed the delta.
 	bool checkDelta(const float oldValue, const float newValue);
 };
-
 
 #endif /* __SENSOR_MONITOR_H__ */

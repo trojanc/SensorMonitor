@@ -34,7 +34,7 @@ void SensorMonitor::registerSensor(const uint8_t sensorId){
 		sensorId,			// Sensor id
 		(unsigned long)0, 	// Last reading
 		(unsigned long)0, 	// Last update
-		(float)0			// Last value
+		(float)SM_NO_READING			// Last value
 	};
 }
 
@@ -50,31 +50,66 @@ void SensorMonitor::update(void){
 		// Check if we may ask this sensor for a reading
 		if(SensorMonitor::hasTimedout(_monitoredSensors[i].last_reading, SM_UPDATE_MIN_DELAY)){
 
-			// Update the last time that we took a reading from this sensor
-			_monitoredSensors[i].last_reading = millis();
-
 			// Call the configured function to get a reading for the sensor
 			float newValue = _getReadingCallback(_monitoredSensors[i].sensorId);
 
+			SensorMonitor::newReading(_monitoredSensors[i].sensorId, newValue);
+		}
+	}
+}
+
+void SensorMonitor::newReading(const uint8_t sensorId, const float value){
+#ifdef SM_DEBUG
+	Serial.print(F("SM:"));
+	Serial.print(sensorId);
+	Serial.print(F("="));
+	Serial.println(value);
+#endif
+	for(int i = 0; i < _items ; i++){
+		// If we found the sensor
+		if(_monitoredSensors[i].sensorId == sensorId){
+
+			// Update the last time that we took a reading from this sensor
+			_monitoredSensors[i].last_reading = millis();
+
 			// The sensor could not produce a reading at this moment
-			if(newValue == SM_NO_READING){
+			if(value == SM_NO_READING){
 				continue; // Continue to the next sensor
 			}
 
-			// Check if the value delta is big enough to cause an immediate update
-			bool reachedDelta = SensorMonitor::checkDelta(_monitoredSensors[i].last_value, newValue);
+			// Check if this is the first value for this sensor
+			bool firstValue = _monitoredSensors[i].last_value == SM_NO_READING;
+
+			// Check if we have reached a timeout since previous reading
+			bool timeoutReached = SensorMonitor::hasTimedout(_monitoredSensors[i].last_update, SM_UPDATE_INTERVAL);
+
+			// Flag if we have reached a big enough delta
+			bool reachedDelta = false;
+
+			if(firstValue){
+				// Save the last value that we called an update for
+				_monitoredSensors[i].last_value = value;
+				
+				// Save the time we last did an update call
+				_monitoredSensors[i].last_update = millis() - random(SM_UPDATE_MIN_DELAY / 2); // set next update to a random bit ahead in time
+			}
+			// We cannot reach a delta and have a first value at the same time
+			else{
+				// Check if the value delta is big enough to cause an immediate update
+				reachedDelta = SensorMonitor::checkDelta(_monitoredSensors[i].last_value, value);
+			}
 
 			// If we need to update immediately, or if the last time we updated was long enough ago
-			if(reachedDelta || SensorMonitor::hasTimedout(_monitoredSensors[i].last_update, SM_UPDATE_INTERVAL)){
+			if(reachedDelta || timeoutReached){
 
 				// Save the last value that we called an update for
-				_monitoredSensors[i].last_value = newValue;
+				_monitoredSensors[i].last_value = value;
 
 				// Call the configured update function
 				_onUpdateCallback(_monitoredSensors[i].sensorId, _monitoredSensors[i].last_value);
 
 				// Save the time we last did an update call
-				_monitoredSensors[i].last_update = millis() + random(SM_UPDATE_MIN_DELAY / 3); // set next update to a random bit ahead in time
+				_monitoredSensors[i].last_update = millis() - random(SM_UPDATE_MIN_DELAY / 2); // set next update to a random bit ahead in time
 			}
 		}
 	}
