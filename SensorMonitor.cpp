@@ -58,12 +58,28 @@ void SensorMonitor::update(void){
 	}
 }
 
+void SensorMonitor::sheduleUpdate(const uint8_t sensorId){
+	for(int i = 0; i < _items ; i++){
+		// If we found the sensor
+		if(_monitoredSensors[i].sensorId == sensorId){
+			// Move all timers back to force an update
+			_monitoredSensors[i].last_reading = 0;
+			_monitoredSensors[i].last_update = 0;
+		}
+	}
+}
+
 void SensorMonitor::newReading(const uint8_t sensorId, const float value){
 #ifdef SM_DEBUG
 	Serial.print(F("SM:"));
 	Serial.print(sensorId);
 	Serial.print(F("="));
-	Serial.println(value);
+	if(value == SM_NO_READING){
+		Serial.println(F("NV"));
+	}
+	else {
+		Serial.println(value);
+	}
 #endif
 	for(int i = 0; i < _items ; i++){
 		// If we found the sensor

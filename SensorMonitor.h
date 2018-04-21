@@ -86,8 +86,9 @@ public:
 	//  Called to register a sensor to the library
 	void registerSensor(const uint8_t sensorId);
 
-	// Invoked when a new reading has to be processed
-	void newReading(const uint8_t sensorId, const float value);
+	// Schedule an imediate reading and update call
+	// Usefull to force a reading from a interupt
+	void sheduleUpdate(const uint8_t sensorId);
 
 	// Initialises all registered modules and prepares the library
 	void begin(void);
@@ -114,6 +115,9 @@ private:
 
 	// Helper to check if a value has passed the delta.
 	bool checkDelta(const float oldValue, const float newValue);
+
+	// Invoked when there is a new reading
+	void newReading(const uint8_t sensorId, const float value);
 };
 
 #endif /* __SENSOR_MONITOR_H__ */
