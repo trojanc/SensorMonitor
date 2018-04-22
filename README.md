@@ -18,7 +18,9 @@ By implementing a `onUpdate` function you can send the value to your remote serv
 ## Short summary of code use
 ```c
 float getReading(uint8_t sensorId){
-	 // Get a reading
+	 if(sensorId == SENSOR1){
+		// Get a reading
+	 }
 }
 
 void onUpdate(uint8_t sensorId, float value){
@@ -38,7 +40,7 @@ void loop(void){
 ```
 
 ## Configuration
-The following configuration can be done by overriding the `#define` values from `SensorMonitor.h`.
+The following configuration can be done by overriding the `#define` values from `SensorMonitor.h`. When using platformio it can be done by adding defines to the build_flags property (e.g. `-DSM_NUM_SENSORS=2`)
 
 ### SM_RANDOM_ANALOG
 **Default:** 0<br>
@@ -56,7 +58,7 @@ Minimum amount to delay before taking readings
 **Default:** 0.5<br>
 Delta required before updating immediately
 
-### SM_VALUE_DELTA
+### SM_NUM_SENSORS
 **Default:** 5<br>
 Maximum number of sensors that can be monitored.
 Keep this as small as required to save memory
