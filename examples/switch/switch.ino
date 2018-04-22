@@ -45,7 +45,7 @@ void loop(void){
 float getReading(uint8_t sensorId){
 	Serial.print(F("Get Reading: Sensor="));Serial.println(sensorId);
 	if(sensorId == SENSOR_DOOR){
-		return digitalRead(SENSOR_DOOR);
+		return digitalRead(SENSOR_DOOR_PIN);
 	}
 	else{
 		return SM_NO_READING; // Invalid sensor
